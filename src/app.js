@@ -15,21 +15,19 @@ app.use(cors({
 }))
 
 import userRouter from './routes/user.routes.js'
-import { registerUser } from "./controllers/user.controller.js";
+import taskRouter from './routes/task.routes.js'
 
 
-app.use("/api/v1/users",userRouter)
-
-
-app.get("/", (req, res) => {
-    res.send("OK");
-});
 
 
 
 
 
-app.use("/api/v1/users", userRouter)
+app.use("/api/v1/users",userRouter)
+app.use("/api/v1/users",taskRouter)
+
+
+
 
 
 export { app }

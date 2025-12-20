@@ -177,7 +177,7 @@ const registerUser = asynchandler(async (req, res) => {
             throw new ApiError(401, "Refresh token expired or reused");
         }
 
-        // 🔁 ROTATE TOKENS
+        
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 

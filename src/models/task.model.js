@@ -23,4 +23,4 @@ const TodoSchema = new Schema({
 
 );
 
-export const Taks = mongoose.model("Task",TodoSchema)
+export const Tasks = mongoose.model("Task",TodoSchema)
