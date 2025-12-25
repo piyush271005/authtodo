@@ -4,7 +4,8 @@ import { Router } from "express";
     loginUser,
     logoutUser,
     refreshAccessToken,
-    getCurrentUser 
+    getCurrentUser,
+    getCurrentUserTasks
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -18,6 +19,7 @@ router.route("/refresh-token").post(refreshAccessToken)
 router.route("/current-user").get(verifyJWT, getCurrentUser)
 
 router.route("/logout").post(verifyJWT,  logoutUser)
+router.route("/get-current-tasks").get(verifyJWT,getCurrentUserTasks)
 
 export default router
 

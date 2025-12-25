@@ -2,7 +2,8 @@ import { Router } from "express";
 import { 
     changeTaskState,
     addtask,
-    deleteTask
+    deleteTask,
+    
  } from "../controllers/task.controllers.js";
 
  import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -14,6 +15,7 @@ router.route("/addtask").post(verifyJWT,addtask)
 router.route("/delete-task/:taskId").post(verifyJWT,deleteTask)
 
 router.route("/change-state/:taskId").post(verifyJWT, changeTaskState)
+
 
 
 export default router

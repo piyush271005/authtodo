@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/users.models.js";
 import  Jwt  from "jsonwebtoken";
 import mongoose from "mongoose";
+import { Tasks } from "../models/task.model.js";
 
 
 const generateAccessAndRefreshTokens = async(userId)=>{
@@ -217,13 +218,27 @@ const registerUser = asynchandler(async (req, res) => {
     ))
 })
 
+const getCurrentUserTasks = async (req, res) => {
+  const userId = req.user._id;
+
+  const tasks = await Tasks.find({ userId }).sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    tasks,
+  });
+};
+
+
 
 export{
     registerUser,
     loginUser,
     logoutUser,
     refreshAccessToken,
-    getCurrentUser
+    getCurrentUser,
+    getCurrentUserTasks
+
 }
 
 
