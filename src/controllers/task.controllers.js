@@ -56,6 +56,8 @@ const deleteTask = asynchandler(async (req, res) => {
 });
 
 const changeTaskState = asynchandler(async (req, res) => {
+
+    console.log("PARAM ID:", req.params.taskId);
     const { taskId } = req.params;
 
     const task = await Tasks.findOne({
