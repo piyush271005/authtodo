@@ -5,7 +5,8 @@ import { Router } from "express";
     logoutUser,
     refreshAccessToken,
     getCurrentUser,
-    getCurrentUserTasks
+    getCurrentUserTasks,
+    isLoggedIn
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -20,6 +21,8 @@ router.route("/current-user").get(verifyJWT, getCurrentUser)
 
 router.route("/logout").post(verifyJWT,  logoutUser)
 router.route("/get-current-tasks").get(verifyJWT,getCurrentUserTasks)
+router.route("/isauth").get(verifyJWT,isLoggedIn)
+
 
 export default router
 

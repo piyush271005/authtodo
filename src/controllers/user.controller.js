@@ -154,59 +154,57 @@ const registerUser = asynchandler(async (req, res) => {
 
     })
 
-   const refreshAccessToken = asynchandler(async (req, res) => {
+   const refreshAccessToken = async (req, res) => {
+  try {
+    
     const incomingRefreshToken =
-        req.cookies.refreshToken || req.body.refreshToken;
+      req.cookies?.refreshToken || req.body?.refreshToken;
 
     if (!incomingRefreshToken) {
-        throw new ApiError(401, "Unauthorized request");
+      return res.status(401).json({ message: "Refresh token missing" });
     }
 
-    try {
-        const decodedToken = Jwt.verify(
-            incomingRefreshToken,
-            process.env.REFRESH_TOKEN_SECRET
-        );
+    
+    const decoded = Jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
 
-        const user = await User.findById(decodedToken._id);
+   
+    const user = await User.findById(decoded._id);
 
-        if (!user) {
-            throw new ApiError(401, "Invalid refresh token");
-        }
-
-        if (incomingRefreshToken !== user.refreshToken) {
-            throw new ApiError(401, "Refresh token expired or reused");
-        }
-
-        
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
-
-        user.refreshToken = refreshToken;
-        await user.save({ validateBeforeSave: false });
-
-        const options = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict"
-        };
-
-        return res
-            .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
-            .json(
-                new ApiResponse(
-                    200,
-                    { accessToken },
-                    "Access token refreshed successfully"
-                )
-            );
-    } catch (error) {
-        console.error("REFRESH ERROR:", error);
-        throw new ApiError(401, "Invalid or expired refresh token");
+    if (!user) {
+      return res.status(401).json({ message: "Invalid refresh token" });
     }
-});
+
+    
+    if (incomingRefreshToken !== user.refreshToken) {
+      return res.status(401).json({ message: "Refresh token expired or reused" });
+    }
+
+   
+    const newAccessToken = user.generateAccessToken();
+
+    
+    return res
+      .status(200)
+      .cookie("accessToken", newAccessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      })
+      .json({
+        success: true,
+        message: "Access token refreshed",
+      });
+  } catch (error) {
+    return res.status(401).json({
+      message: error.message,
+    });
+  }
+};
+
+      
 
     const getCurrentUser = asynchandler(async(req, res) => {
     return res
@@ -229,6 +227,43 @@ const getCurrentUserTasks = async (req, res) => {
   });
 };
 
+const isLoggedIn = (req, res) => {
+  try {
+    const token = req.cookies?.accessToken;
+
+    if (!token) {
+      return res.status(401).json({ authenticated: false });
+    }
+
+    const isLoggedIn = (req, res) => {
+  try {
+    const token = req.cookies?.accessToken;
+
+    if (!token) {
+      return res.status(401).json({ authenticated: false });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // optional: attach user to request for downstream usage
+    req.user = decoded;
+
+    return res.status(200).json({ authenticated: true });
+
+  } catch (error) {
+    return res.status(401).json({ authenticated: false });
+  }
+};
+
+    return res.status(200).json({ authenticated: true });
+
+  } catch (error) {
+    return res.status(401).json({ authenticated: false });
+  }
+};
+
+
+
 
 
 export{
@@ -237,7 +272,8 @@ export{
     logoutUser,
     refreshAccessToken,
     getCurrentUser,
-    getCurrentUserTasks
+    getCurrentUserTasks,
+    isLoggedIn
 
 }
 
