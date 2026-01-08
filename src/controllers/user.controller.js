@@ -191,7 +191,7 @@ const registerUser = asynchandler(async (req, res) => {
       .cookie("accessToken", newAccessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
       })
       .json({
         success: true,
@@ -234,6 +234,9 @@ const isLoggedIn = (req, res) => {
     if (!token) {
       return res.status(401).json({ authenticated: false });
     }
+
+
+
 
     const isLoggedIn = (req, res) => {
   try {
