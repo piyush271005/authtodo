@@ -196,7 +196,9 @@ const registerUser = asynchandler(async (req, res) => {
       .cookie("accessToken", newAccessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none" ,
+        path: "/"
+        
       })
       .json({
         success: true,
