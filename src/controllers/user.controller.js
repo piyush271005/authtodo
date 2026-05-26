@@ -236,37 +236,10 @@ const getCurrentUserTasks = async (req, res) => {
 
 const isLoggedIn = (req, res) => {
   try {
-    const token = req.cookies?.accessToken;
-
-    if (!token) {
+    if (!req.user) {
       return res.status(401).json({ authenticated: false });
     }
-
-
-    
-
-    const isLoggedIn = (req, res) => {
-  try {
-    const token = req.cookies?.accessToken;
-
-    if (!token) {
-      return res.status(401).json({ authenticated: false });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // optional: attach user to request for downstream usage
-    req.user = decoded;
-
-    return res.status(200).json({ authenticated: true });
-
-  } catch (error) {
-    return res.status(401).json({ authenticated: false });
-  }
-};
-
-    return res.status(200).json({ authenticated: true });
-
+    return res.status(200).json({ authenticated: true, user: req.user });
   } catch (error) {
     return res.status(401).json({ authenticated: false });
   }
