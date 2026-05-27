@@ -10,8 +10,21 @@ const app = express()
 app.use(cookieParser())
 app.use(express.json());
 
+const allowedOrigins = [
+  "https://authtodo-fronend-ola6.vercel.app",
+  "https://authtodo-frontend-ola6.vercel.app",
+  process.env.CORS_ORIGIN
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes("*")) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
 }))
 
